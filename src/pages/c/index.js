@@ -11,7 +11,6 @@ function Index(){
       const response = await fetch('/api/getAllCategories');
       const jsonData = await response.json();
       setCategories(jsonData.data.data)
-      console.log(jsonData.data.data)
     }
 
     fetchCategories();

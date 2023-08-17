@@ -1,5 +1,5 @@
 import ProductCard from "@/components/ProductCard";
-import { Box, Button, CircularProgress, Container, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, CircularProgress, Container, Flex, Heading, Select, SimpleGrid, Spacer, Text, VStack } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -9,7 +9,6 @@ const itemsPerPage = 14;
 function Category(){
   const router = useRouter();
   const { cid } = router.query;
-
   const [products, setProducts] = useState([])
 
   // Pagination Handlers
@@ -19,12 +18,18 @@ function Category(){
   const endIndex = startIndex + itemsPerPage;
   const displayedItems = products.slice(startIndex, endIndex);
 
+  const handleSelectChange = (event) => {
+    const selectedValue = event.target.value;
+    setCurrentPage(selectedValue);
+  };
+
   useEffect(() => {
+    console.log(products)
+
     async function fetchProducts(){
       const response = await fetch(`/api/getAllProducts?cid=${cid}`);
       const jsonData = await response.json();
       setProducts(jsonData.data.data)
-      console.log(jsonData.data.data)
     }
 
     fetchProducts();
@@ -49,9 +54,17 @@ function Category(){
             boxShadow="md"
             zIndex={10}
             >
-              <Flex direction='row' gap={4} alignItems='center'>
+              <Flex gap={4} alignItems='center'>
                 <Button variant='link' colorScheme="blue" onClick={() => {router.push('/c/')}}>Back</Button>
-                <Text fontSize='xl'>{cid}</Text>
+                <Text fontWeight='bold' fontSize={['16px', '24px']}>{cid}</Text>
+                <Spacer />
+                <Select onChange={handleSelectChange} w>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <option key={index} value={index + 1}>
+                      {index + 1}
+                    </option>
+                  ))}
+                </Select>
               </Flex>
           </Box>
           { products ? (
